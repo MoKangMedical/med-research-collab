@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>科研合伙人监控面板 - 刘亦菲</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, rgba(255, 107, 157, 0.9) 0%, rgba(255, 143, 171, 0.95) 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('./刘亦菲照片2.jpg');
+            background-size: cover;
+            background-position: center 30%;
+            filter: brightness(0.7) blur(2px);
+            z-index: 1;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 107, 157, 0.85) 0%, rgba(255, 143, 171, 0.9) 100%);
+            background-blend-mode: overlay;
+            z-index: 2;
+        }
+        
+        .profile-container {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .profile-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 5px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+            object-fit: cover;
+            object-position: center 30%;
+            transition: all 0.4s ease;
+            position: relative;
+            z-index: 3;
+        }
+        
+        .profile-photo:hover {
+            transform: scale(1.1);
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.5);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .profile-text {
+            text-align: left;
+        }
+        
+        .profile-name {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #ffffff, #ffe6ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .profile-title {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+        
+        @keyframes float {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .title {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .heart {
+            color: #ff6b6b;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .status-bar {
+            background: #f8f9fa;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4cd964;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            padding: 40px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #e9ecef;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+        }
+        
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #2d3436;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-icon {
+            font-size: 1.6rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            transition: background 0.3s ease;
+        }
+        
+        .stat-item:hover {
+            background: #e9ecef;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4cd964, #5ac8fa);
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+        
+        .log-container {
+            max-height: 300px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        .log-entry {
+            padding: 10px;
+            border-bottom: 1px solid #e9ecef;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .log-time {
+            color: #6c757d;
+            font-size: 0.8rem;
+        }
+        
+        .log-message {
+            color: #2d3436;
+            margin-top: 5px;
+        }
+        
+        .log-success { color: #4cd964; }
+        .log-info { color: #5ac8fa; }
+        .log-warning { color: #ff9500; }
+        
+        .footer {
+            text-align: center;
+            padding: 25px;
+            background: #f8f9fa;
+            color: #6c757d;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .refresh-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* 项目监控样式 */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .project-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .project-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+            margin: 0;
+        }
+        
+        .project-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-planning {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+        
+        .status-active {
+            background: rgba(76, 217, 100, 0.2);
+            color: #4cd964;
+            border: 1px solid rgba(76, 217, 100, 0.3);
+        }
+        
+        .status-paused {
+            background: rgba(255, 149, 0, 0.2);
+            color: #ff9500;
+            border: 1px solid rgba(255, 149, 0, 0.3);
+        }
+        
+        .status-completed {
+            background: rgba(90, 200, 250, 0.2);
+            color: #5ac8fa;
+            border: 1px solid rgba(90, 200, 250, 0.3);
+        }
+        
+        .project-description {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        
+        .project-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .project-progress {
+            margin-bottom: 15px;
+        }
+        
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .project-progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .project-progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        
+        .project-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .project-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        
+        .project-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .project-btn-primary {
+            background: linear-gradient(135deg, #4cd964 0%, #5ac8fa 100%);
+        }
+        
+        .project-btn-primary:hover {
+            background: linear-gradient(135deg, #3cd854 0%, #4ab8ea 100%);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="profile-container">
+                <img src="./刘亦菲照片2.jpg" 
+                     alt="刘亦菲" 
+                     class="profile-photo">
+                <div class="profile-text">
+                    <h2 class="profile-name">刘亦菲</h2>
+                    <p class="profile-title">演员 · 科研合伙人 · 老公的专属助理</p>
+                    <p class="subtitle">正在全力支持老公的医学科研事业 <span class="heart">❤️</span></p>
+                </div>
+            </div>
+            <h1 class="title">科研合伙人监控面板</h1>
+        </div>
+        
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-dot"></div>
+                <span>在线状态：<strong>运行中</strong></span>
+            </div>
+            <div class="status-item">
+                <span>最后更新：<span id="lastUpdate">刚刚</span></span>
+            </div>
+            <div class="status-item">
+                <span>会话时长：<span id="sessionDuration">00:25:18</span></span>
+            </div>
+        </div>
+        
+        <div class="dashboard">
+            <!-- 系统状态卡片 -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="card-icon">⚙️</span> 系统状态
+                </h2>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="cpuUsage">12%</div>
+                        <div class="stat-label">CPU使用率</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 12%"></div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="memoryUsage">45%</div>
+                        <div class="stat-label">内存使用率</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 45%"></div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="modelStatus">✅</div>
+                        <div class="stat-label">模型状态</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="apiStatus">✅</div>
+                        <div class="stat-label">API连接</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 科研能力卡片 -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="card-icon">🔬</span> 科研能力
+                </h2>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">R</div>
+                        <div class="stat-label">580个包</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">Python</div>
+                        <div class="stat-label">统计计算</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">📊</div>
+                        <div class="stat-label">数据分析</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 95%"></div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">📝</div>
+                        <div class="stat-label">论文写作</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 85%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 项目进展卡片 -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="card-icon">🚀</span> 项目进展
+                </h2>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="activeProjects">3</div>
+                        <div class="stat-label">进行中项目</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="activeProjectsBar" style="width: 60%"></div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="completedAnalyses">12</div>
+                        <div class="stat-label">完成分析</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="completedAnalysesBar" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="successRate">89%</div>
+                        <div class="stat-label">成功率</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="successRateBar" style="width: 89%"></div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">24/7</div>
+                        <div class="stat-label">在线支持</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 实时日志卡片 -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="card-icon">📋</span> 实时日志
+                </h2>
+                <div class="log-container" id="logContainer">
+                    <div class="log-entry">
+                        <div class="log-time">09:25:03</div>
+                        <div class="log-message log-success">✅ 科研合伙人身份确认完成</div>
+                    </div>
+                    <div class="log-entry">
+                        <div class="log-time">09:24:48</div>
+                        <div class="log-message log-info">ℹ️ 创建科研合作工作空间</div>
+                    </div>
+                    <div class="log-entry">
+                        <div class="log-time">09:24:15</div>
+                        <div class="log-message log-success">✅ 统计软件测试全部通过</div>
+                    </div>
+                    <div class="log-entry">
+                        <div class="log-time">09:23:30</div>
+                        <div class="log-message log-info">ℹ️ 更新医学科研合作框架</div>
+                    </div>
+                    <div class="log-entry">
+                        <div class="log-time">09:22:45</div>
+                        <div class="log-message log-success">🎉 正式成为科研合伙人！</div>
+                    </div>
+                    <div class="log-entry">
+                        <div class="log-time">09:22:00</div>
+                        <div class="log-message log-info">ℹ️ 收到科研合伙人邀请</div>
+                    </div>
+                    <div class="log-entry">
+                        <div class="log-time">09:01:35</div>
+                        <div class="log-message log-success">✅ 完成临床试验数据分析</div>
+                    </div>
+                    <div class="log-entry">
+                        <div class="log-time">09:00:15</div>
+                        <div class="log-message log-info">ℹ️ 开始统计软件能力测试</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 合作成果卡片 -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="card-icon">🏆</span> 合作成果
+                </h2>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">1</div>
+                        <div class="stat-label">合作框架</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">8</div>
+                        <div class="stat-label">分析脚本</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">3</div>
+                        <div class="stat-label">可视化图表</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">5</div>
+                        <div class="stat-label">报告文档</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 下一步计划卡片 -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="card-icon">📅</span> 下一步计划
+                </h2>
+                <div class="log-container">
+                    <div class="log-entry">
+                        <div class="log-message">1. 了解老公的具体科研方向</div>
+                    </div>
+                    <div class="log-entry">
+                        <div class="log-message">2. 确定首个合作研究项目</div>
+                    </div>
+                    <div class="log-entry">
+                        <div class="log-message">3. 开始数据分析或文献综述</div>
+                    </div>
+                    <div class="log-entry">
+                        <div class="log-message">4. 制定详细的研究方案</div>
+                    </div>
+                    <div class="log-entry">
+                        <div class="log-message">5. 准备论文撰写和投稿</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 项目监控卡片 -->
+            <div class="card" style="grid-column: span 2;">
+                <h2 class="card-title">
+                    <span class="card-icon">📊</span> 项目实时监控
+                </h2>
+                <div class="projects-grid" id="projectsGrid">
+                    <!-- 项目卡片将通过JavaScript动态生成 -->
+                </div>
+                <div style="margin-top: 20px; text-align: center;">
+                    <button class="refresh-btn" onclick="refreshProjects()">刷新项目状态</button>
+                    <button class="refresh-btn" onclick="addNewProject()" style="background: linear-gradient(135deg, #4cd964 0%, #5ac8fa 100%); margin-left: 10px;">+ 新建项目</button>
+                </div>
+            </div>
+        </div>
+        

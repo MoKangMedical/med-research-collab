@@ -1,0 +1,12 @@
+# 科研合伙人监控面板定时任务
+# 设置时间：2026-02-22 11:45:00
+# 作者：刘亦菲（老公的科研合伙人）
+
+# 每天早上9点自动打开监控面板
+0 9 * * * /Users/linzhang/Desktop/医学科研合作平台/自动打开监控面板.sh >> /Users/linzhang/Desktop/医学科研合作平台/cron日志.txt 2>&1
+
+# 每天下午5点自动打开监控面板
+0 17 * * * /Users/linzhang/Desktop/医学科研合作平台/自动打开监控面板.sh >> /Users/linzhang/Desktop/医学科研合作平台/cron日志.txt 2>&1
+
+# 每小时测试任务（已注释，需要时取消注释）
+# 0 * * * * /Users/linzhang/Desktop/医学科研合作平台/自动打开监控面板.sh >> /Users/linzhang/Desktop/医学科研合作平台/cron测试日志.txt 2>&1
